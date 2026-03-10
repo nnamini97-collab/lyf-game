@@ -873,7 +873,7 @@ button,a,[onclick]{touch-action:manipulation;}
         <div class="pd-email-icon">✉️</div>
         <div>
           <div class="pd-email-htitle">Weekly Progress Email Preview</div>
-          <div class="pd-email-hsub">Sent every Sunday · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ec80958aac80958a9f878096c28f8381">[email&#160;protected]</a> → <span id="pd-parent-email" style="color:var(--cyan)">your email</span></div>
+          <div class="pd-email-hsub">Sent every Sunday · lyf@lyfsklz.com → <span id="pd-parent-email" style="color:var(--cyan)">your email</span></div>
         </div>
       </div>
       <div class="pd-email-body">
@@ -916,7 +916,7 @@ button,a,[onclick]{touch-action:manipulation;}
   <div style="padding:14px 18px;border-bottom:1px solid rgba(255,216,77,.15);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
     <div>
       <div style="font-family:var(--ff-head);font-size:15px;color:var(--gold)">📬 Weekly Progress Email</div>
-      <div style="font-family:var(--ff-mono);font-size:8px;color:rgba(255,216,77,.5);margin-top:2px">FROM: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="234f5a45634f5a4550484f590d404c4e">[email&#160;protected]</a> · TO: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e0908192858e94a0858d81898cce838f8d">[email&#160;protected]</a></div>
+      <div style="font-family:var(--ff-mono);font-size:8px;color:rgba(255,216,77,.5);margin-top:2px">FROM: lyf@lyfsklz.com · TO: parent@email.com</div>
     </div>
     <button onclick="closeEmailModal()" style="font-family:var(--ff-mono);font-size:11px;color:rgba(255,255,255,.7);background:none;border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:5px 14px;cursor:pointer;">✕ Close</button>
   </div>
@@ -1046,12 +1046,12 @@ button,a,[onclick]{touch-action:manipulation;}
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 
 // ════════════════════════════════════════
 // AUTH SYSTEM
 // ════════════════════════════════════════
-// ── Load accounts from shared localStorage (written by admin dashboard) ──
+// ── Shared localStorage (written by admin dashboard) ──
 const LYF_STORAGE_KEY = 'lyf_accounts_v1';
 function loadSharedAccounts() {
   try {
@@ -1076,7 +1076,7 @@ const AUTH_STORE={
 };
 function simpleHash(s){let h=0;for(let i=0;i<s.length;i++){h=(Math.imul(31,h)+s.charCodeAt(i))|0;}return h.toString(36);}
 function authFindAccount(email){
-  // Refresh from localStorage on each lookup to get latest accounts
+  // Always refresh from localStorage in case admin created account
   const fresh = loadSharedAccounts();
   if (fresh) AUTH_STORE.accounts = fresh;
   return AUTH_STORE.accounts.find(a=>a.email.toLowerCase()===email.toLowerCase());
@@ -1095,9 +1095,11 @@ function doParentLogin(){
   if(!pw){setInputErr('login-pw',true);showFieldErr('login-pw-err',true);ok=false;}
   if(!ok)return;
   const acc=authFindAccount(email);
-  // Support both hashed passwords (old) and tempPw plain text (admin-created accounts)
-  const pwMatch = acc && (acc.pwHash===simpleHash(pw) || acc.tempPw===pw);
-  if(!pwMatch){
+  const pwOk = acc && (
+    (acc.pwHash && acc.pwHash === simpleHash(pw)) ||
+    (acc.tempPw && acc.tempPw === pw)
+  );
+  if(!pwOk){
     setInputErr('login-pw',true);
     document.getElementById('login-pw-err').textContent='Incorrect email or password.';
     showFieldErr('login-pw-err',true);return;
@@ -5236,4 +5238,17 @@ function showEmailModal(){
 
     <!-- footer -->
     <div style="text-align:center;padding:14px 0;border-top:1px solid rgba(255,255,255,.06);">
-      <div style="font-family:var(--ff-mono);font-size:8px;color:rgba(255,255,255,.3
+      <div style="font-family:var(--ff-mono);font-size:8px;color:rgba(255,255,255,.3);letter-spacing:.12em;line-height:2">
+        LYF Learning Inc. · No ads · No data selling · COPPA Compliant<br>
+        To unsubscribe or manage notifications: privacy@lyfsklz.com
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('email-modal-body').innerHTML=html;
+  document.getElementById('email-modal').style.display='flex';
+}
+function closeEmailModal(){document.getElementById('email-modal').style.display='none';}
+</script>
+</body>
+</html>
